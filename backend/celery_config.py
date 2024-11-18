@@ -2,7 +2,7 @@ from celery import Celery # type: ignore
 from celery.schedules import crontab # type: ignore
 
 import config
-from reminder.tasks import alert_notification
+from reminder.tasks import schedule_notification_queue_sender
 
 
 celery = Celery(
@@ -14,10 +14,8 @@ celery = Celery(
 
 
 celery.conf.beat_schedule = {
-    "alert_notification": {
-        "task": "reminder.tasks.alert_notification",
+    "schedule_notification_queue_sender": {
+        "task": "reminder.tasks.schedule_notification_queue_sender",
         "schedule": crontab(),
     }
 }
-
-# celery -A celery_config:celery worker --beat --loglevel=info

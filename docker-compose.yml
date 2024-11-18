@@ -1,0 +1,65 @@
+volumes:
+  pg_data:
+  cache:
+  rabbitmq-data:
+
+services:
+
+  backend:
+    build: ./backend/
+    container_name: alert_backend
+    command: bash /app/startup.sh
+    env_file: .env
+    restart: always
+    depends_on:
+      db:
+        condition: service_started
+      redis:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+
+  celerys:
+    restart: always
+    container_name: alert_celerys
+    build: ./backend/
+    env_file: .env
+    command: bash /app/startup_celery.sh
+    depends_on:
+      backend:
+        condition: service_started
+
+  db:
+    image: postgres:15
+    container_name: alert_db
+    env_file: .env
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+
+  gateway:
+    build: ./nginx/
+    container_name: alert_nginx
+    env_file: .env
+    ports:
+      - 8000:80
+    depends_on:
+      backend:
+        condition: service_started
+
+  redis:
+    image: redis:7.4.1
+    container_name: alert_redis
+    command: redis-server
+    restart: always
+    volumes:
+      - cache:/data
+
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: alert_rabbitmq
+    env_file: .env
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq-data:/var/lib/rabbitmq
