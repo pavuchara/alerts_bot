@@ -46,7 +46,7 @@ async def create_user(
     except IntegrityError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Wrong user data",
+            detail="User alredy exists",
         )
 
 

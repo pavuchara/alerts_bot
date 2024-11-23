@@ -14,7 +14,7 @@ from users.utils import validate_user_email
 class UserCreateSchema(BaseModel):
     email: str | None = Field(max_length=256)
     password: str | None = Field(max_length=50)
-    telegram_id: int | None = Field(ge=1, le=99999999)
+    telegram_id: int | None = Field(ge=1)
     first_name: str | None = Field(max_length=50)
     last_name: str | None = Field(max_length=50)
 

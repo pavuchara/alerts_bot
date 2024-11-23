@@ -18,16 +18,18 @@ log = logging.getLogger(__name__)
 def schedule_notification_queue_sender() -> None:
     with sync_session_maker() as db:
         try:
-            reminders = db.scalars(
-                select(Reminder)
-                .join(User)
-                .filter(User.telegram_id.is_not(None))
-                .where(
-                    Reminder.alert_datetime < datetime.now(pytz.timezone("Europe/Moscow")),
-                )
+            reminders = list(
+                db.scalars(
+                    select(Reminder)
+                    .join(User)
+                    .filter(User.telegram_id.is_not(None))
+                    .where(
+                        Reminder.alert_datetime < datetime.now(pytz.timezone("Europe/Moscow")),
+                    )
+                ).all()
             )
             messages: list[dict[str, Any]] = []
-            for reminder in reminders.all():
+            for reminder in reminders:
                 messages.append({
                     "tg_id": reminder.author.telegram_id,
                     "description": reminder.description,
@@ -37,10 +39,11 @@ def schedule_notification_queue_sender() -> None:
                 tg_service = sync_get_telegram_pusher_service()
                 tg_service.push_messages(messages=messages)
 
-                # TODO Delete or unpublish tasks
-                for message in messages:
-                    db.delete(message)
-                    db.commit()
+            for reminder in reminders:
+                db.delete(reminder)
+                db.commit()
+                log.warning("DELETE REMINDER" * 5)
+
             log.info("send messages to queue")
         except Exception:
             db.rollback()

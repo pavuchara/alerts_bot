@@ -64,8 +64,8 @@ class AuthJWTService(AbstractAuthJWTService):
             raise AuthUserException("Invalid token.")
         except ExpiredSignatureError:
             raise AuthUserException("Token expired.")
-        except JWTError:
-            raise AuthUserException()
+        except JWTError as e:
+            raise AuthUserException(str(e))
         else:
             return user
 

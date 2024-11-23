@@ -10,7 +10,7 @@ load_dotenv()
 
 # Use -> `openssl rand -hex 32`
 API_KEY: str = os.getenv("API_KEY", "some_key")
-ALGORITHM: str = os.getenv("API_KEY", "HS256")
+ALGORITHM: str = os.getenv("ALGORITHM", "HS256")
 ACCESS_TOKEN_LIFETIME = timedelta(minutes=30)
 
 
@@ -27,7 +27,7 @@ SYNC_DATABASE_URL: str = f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSW
 
 # Redis:
 REDIS_HOST: str = os.getenv("REDIS_HOST", "localhost")
-REDIS_PORT: str = os.getenv("REDIS_HOST", "localhost")
+REDIS_PORT: str = os.getenv("REDIS_HOST", "6379")
 
 
 # Celery:

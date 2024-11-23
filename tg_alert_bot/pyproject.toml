@@ -1,0 +1,22 @@
+[tool.poetry]
+name = "tg-alert-bot"
+version = "0.1.0"
+description = ""
+authors = ["Marsel <lllmarselll@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+python-dotenv = "^1.0.1"
+aiogram = "^3.15.0"
+redis = "^5.2.0"
+aiogram-calendar = "^0.5.0"
+types-pytz = "^2024.2.0.20241003"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+pytz = "^2024.2"
+aio-pika = "^9.5.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
