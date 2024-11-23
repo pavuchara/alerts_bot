@@ -19,6 +19,14 @@ services:
       rabbitmq:
         condition: service_started
 
+  tg_bot:
+    build: ./tg_alert_bot/
+    container_name: alert_tg_bot
+    env_file: .env
+    depends_on:
+      backend:
+        condition: service_started
+
   celerys:
     restart: always
     container_name: alert_celerys

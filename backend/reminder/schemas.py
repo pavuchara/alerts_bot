@@ -24,8 +24,8 @@ class ReminderCreateSchema(BaseModel):
     @field_validator("alert_datetime")
     @classmethod
     def validate_alert_datetime(cls, value: datetime, info: ValidationInfo):
-        if (datetime.now(pytz.timezone("Europe/Moscow")) + timedelta(hours=1)) > value:
-            raise ValueError("A reminder can be set for at least 1 hour")
+        if (datetime.now(pytz.timezone("Europe/Moscow")) + timedelta(minutes=3)) > value:
+            raise ValueError("A reminder can be set for at least 3 minutes")
         return value
 
 

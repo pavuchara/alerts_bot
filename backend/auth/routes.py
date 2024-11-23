@@ -52,7 +52,8 @@ async def get_access_token_for_tg_user(
             detail="Out of token.",
         )
     try:
-        user = await auth_service.authenticate_tg_user(token_from_tg=token_from_tg)
+        _, token = token_from_tg.split()
+        user = await auth_service.authenticate_tg_user(token_from_tg=token)
         access_token = await auth_service.create_access_token(user=user)
         return {
             "access_token": access_token,
