@@ -18,5 +18,5 @@ class ReminderTGMessageSender:
     async def __prepare_message(self, message: aio_pika.IncomingMessage):
         decoded_message = json.loads(message.body.decode())
         chat_id, recived_message = decoded_message["tg_id"], decoded_message["description"]
-        prepared_message = f"Ты просил/а напомнить:\n'{recived_message}'"
+        prepared_message = f"Ты просил/а напомнить:\n{recived_message}"
         return chat_id, prepared_message
