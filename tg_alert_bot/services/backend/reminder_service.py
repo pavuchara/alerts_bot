@@ -3,7 +3,7 @@ from datetime import datetime
 
 from services.connectors import get_session
 from services.backend.domen import BackendPaths
-from services.backend.exceptions import ReminderServiceException
+from services.backend.exceptions import ReminderLimitException, ReminderServiceException
 
 
 class ReminderService:
@@ -32,6 +32,13 @@ class ReminderService:
                 BackendPaths.SELF_REMINDERS.value,
                 headers=await self.__get_auth_headers(),
             ) as response:
+
+                if (
+                    response.status == 400
+                    and (await response.json()).get("detail") == "Limit reminders, max 10"
+                ):
+                    raise ReminderLimitException()
+
                 if response.status != 200:
                     raise ReminderServiceException("Не вышло получить напоминания, попробуй позже")
                 response_dct = await response.json()

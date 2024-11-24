@@ -27,12 +27,12 @@ SYNC_DATABASE_URL: str = f"postgresql+psycopg2://{POSTGRES_USER}:{POSTGRES_PASSW
 
 # Redis:
 REDIS_HOST: str = os.getenv("REDIS_HOST", "localhost")
-REDIS_PORT: str = os.getenv("REDIS_HOST", "6379")
+REDIS_PORT: str = os.getenv("REDIS_PORT", "6379")
 
 
 # Celery:
-CELERY_BROCKER: str = f"redis://{REDIS_HOST}:6379/0"
-CELERY_BACKEND: str = f"redis://{REDIS_PORT}:6379/0"
+CELERY_BROCKER: str = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
+CELERY_BACKEND: str = f"redis://{REDIS_PORT}:{REDIS_PORT}/0"
 
 
 # RabbitMQ
