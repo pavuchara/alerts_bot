@@ -21,3 +21,9 @@ class ReminderPermissionsException(AbstractReminderException):
 
     def __str__(self) -> str:
         return self.text_error or "Access only for the author."
+
+
+class ReminderLimitException(AbstractReminderException):
+
+    def __str__(self) -> str:
+        return self.text_error or "Limit reminders, max 10"

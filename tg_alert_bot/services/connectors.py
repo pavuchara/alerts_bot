@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 import aiohttp
 import aio_pika
 from aiogram import Bot
+from redis.asyncio import Redis
 
 import config
 from services.message_sender import ReminderTGMessageSender
@@ -29,3 +30,17 @@ async def amqp_consume_queue(bot: Bot):
     )
     sender = ReminderTGMessageSender(bot=bot)
     await queue.consume(sender.process_message_notificator)
+
+
+@asynccontextmanager
+async def get_cache_session() -> AsyncGenerator[Redis, None]:
+    cache_session = Redis(
+        host=config.REDIS_HOST,
+        port=config.REDIS_PORT,
+        db=config.REDIS_DB,
+        decode_responses=True,
+    )
+    try:
+        yield cache_session
+    finally:
+        await cache_session.aclose()

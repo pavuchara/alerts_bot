@@ -19,7 +19,10 @@ from aiogram_calendar.schemas import SimpleCalAct
 
 from lexicon.lexicon import LEXICON
 from filters.time_filter import TimeFilter
-from services.backend.exceptions import ReminderServiceException
+from services.backend.exceptions import (
+    ReminderServiceException,
+    ReminderLimitException,
+)
 from state_machine.reminder import FSMFillReminder
 from keyboards.calendar_keyboard import get_calendar_keyboard
 from keyboards.reminder_keyboards import (
@@ -57,14 +60,21 @@ async def process_cancel_in_fsm(message: Message, state: FSMContext):
 
 
 @router.message(Command("create"), StateFilter(default_state))
-async def process_create_wo_fsm(message: Message, state: FSMContext):
+async def process_create_wo_fsm(
+    message: Message,
+    state: FSMContext,
+    reminder_service: ReminderService,
+):
     """Entry point for FSM fill reminder."""
-    calendar = await get_calendar_keyboard(message)
-    await message.answer(
-        text=LEXICON["/create"],
-        reply_markup=await calendar.start_calendar()
-    )
-    await state.set_state(FSMFillReminder.fill_date)
+    if len(await reminder_service.get_self_reminders()) >= 10:
+        await message.answer(text=LEXICON["reminder_limit"])
+    else:
+        calendar = await get_calendar_keyboard(message)
+        await message.answer(
+            text=LEXICON["/create"],
+            reply_markup=await calendar.start_calendar()
+        )
+        await state.set_state(FSMFillReminder.fill_date)
 
 
 @router.callback_query(
@@ -137,6 +147,8 @@ async def process_fill_description(
         await reminder_service.create_reminder(await state.get_data())
     except ReminderServiceException as e:
         await message.answer(text=str(e))
+    except ReminderLimitException:
+        await message.answer(text=LEXICON["reminder_limit"])
     else:
         await message.answer(
             text=LEXICON["filled_all_data"].format(date=data["date"].date(), time=data["time"])

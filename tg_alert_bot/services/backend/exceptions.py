@@ -34,3 +34,9 @@ class ReminderServiceException(AbstractException):
 
     def __str__(self) -> str:
         return self.text_error or "Reminder exception..."
+
+
+class ReminderLimitException(AbstractException):
+
+    def __str__(self) -> str:
+        return self.text_error or "Limit reminders, max 10"

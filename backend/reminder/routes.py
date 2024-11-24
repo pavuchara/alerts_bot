@@ -12,6 +12,7 @@ from auth.dependencies import get_current_user
 from reminder.dependencies import get_reminder_service
 from reminder.exceptions import (
     ReminderDoesNotExistException,
+    ReminderLimitException,
     ReminderPermissionsException,
 )
 from reminder.services import ReminderService
@@ -52,10 +53,16 @@ async def create_reminder(
     reminder_service: Annotated[ReminderService, Depends(get_reminder_service)],
     current_user: Annotated[dict[str, Any], Depends(get_current_user)],
 ):
-    return await reminder_service.create_reminder(
-        reminder_data=reminder_data,
-        user_id=current_user["id"]
-    )
+    try:
+        return await reminder_service.create_reminder(
+            reminder_data=reminder_data,
+            user_id=current_user["id"]
+        )
+    except ReminderLimitException as e:
+        return HTTPException(
+            status_code=status.HTTP_200_OK,
+            detail=str(e),
+        )
 
 
 @router.get(

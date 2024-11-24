@@ -23,6 +23,7 @@ async def main() -> None:
 
     bot: Bot = Bot(config.BOT_TOKEN)
     storage: MemoryStorage = MemoryStorage()
+
     dp: Dispatcher = Dispatcher(storage=storage)
 
     await set_main_menu(bot)

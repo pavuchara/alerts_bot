@@ -4,6 +4,7 @@ from typing import Sequence
 from reminder.exceptions import (
     ReminderDoesNotExistException,
     ReminderPermissionsException,
+    ReminderLimitException,
 )
 from reminder.models import Reminder
 from reminder.repositories import ReminderRepository
@@ -75,6 +76,8 @@ class ReminderService(AbstractReminderService):
         return await self.reminder_repository.get_reminders_by_user_id(user_id=user_id)
 
     async def create_reminder(self, reminder_data: ReminderCreateSchema, user_id: int) -> Reminder:
+        if len(await self.get_reminders_by_user_id(user_id=user_id)) >= 10:
+            raise ReminderLimitException()
         return await self.reminder_repository.create_reminder(
             reminder_data=reminder_data,
             user_id=user_id,
