@@ -32,7 +32,7 @@ REDIS_PORT: str = os.getenv("REDIS_PORT", "6379")
 
 # Celery:
 CELERY_BROCKER: str = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
-CELERY_BACKEND: str = f"redis://{REDIS_PORT}:{REDIS_PORT}/0"
+CELERY_BACKEND: str = f"redis://{REDIS_HOST}:{REDIS_PORT}/0"
 
 
 # RabbitMQ
